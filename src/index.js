@@ -7,6 +7,7 @@
 
 const { program } = require('commander');
 const { HackoBot } = require('./core/hackobot');
+const { GhostNet } = require('./modules/ghostnet');
 const chalk = require('chalk');
 
 // ASCII Art Banner
@@ -355,6 +356,30 @@ program
         console.log(JSON.stringify(init.account, null, 2));
       }
 
+    } catch (error) {
+      console.error(chalk.red(`\n❌ Error: ${error.message}`));
+    }
+  });
+
+program
+  .command('ghostnet')
+  .description('Run GhostNet cross-market coordination intelligence')
+  .option('-c, --chain <chain>', 'Chain to analyze', 'ethereum')
+  .action(async (options) => {
+    console.log(banner);
+    console.log(chalk.yellow(`\n👻 Running GhostNet on ${options.chain}...\n`));
+
+    try {
+      const ghostnet = new GhostNet(bot.nansen);
+      const results = await ghostnet.run(options.chain);
+
+      console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+      console.log(chalk.bold('👻 GhostNet Summary'));
+      console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+      console.log(`📡 ${chalk.bold('API Calls:')} ${chalk.yellow(results.apiCalls)}`);
+      console.log(`🕸️  ${chalk.bold('Coordination Clusters:')} ${chalk.yellow(results.coordinationClusters.length)}`);
+      console.log(`⚡ ${chalk.bold('Spot/Perp Overlap:')} ${chalk.yellow(results.hyperliquidOverlap.length)}`);
+      console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
     } catch (error) {
       console.error(chalk.red(`\n❌ Error: ${error.message}`));
     }

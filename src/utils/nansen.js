@@ -131,9 +131,9 @@ class NansenClient {
     return this.exec(`research smart-money dcas --chain ${chain} --limit ${limit}`);
   }
 
-  async getSmartMoneyPerpTrades(chain = 'ethereum', options = {}) {
+  async getSmartMoneyPerpTrades(options = {}) {
     const { days = 1, limit = 50 } = options;
-    return this.exec(`research smart-money perp-trades --chain ${chain} --days ${days} --limit ${limit}`);
+    return this.exec(`research smart-money perp-trades --days ${days} --limit ${limit}`);
   }
 
   // ========== TOKEN ANALYTICS ==========
@@ -210,9 +210,9 @@ class NansenClient {
 
   // ========== PERPETUALS ==========
 
-  async getPerpScreener(chain = 'ethereum', options = {}) {
+  async getPerpScreener(options = {}) {
     const { timeframe = '24h' } = options;
-    return this.exec(`research perp screener --chain ${chain} --timeframe ${timeframe}`);
+    return this.exec(`research perp screener --timeframe ${timeframe}`);
   }
 
   async getPerpLeaderboard(options = {}) {

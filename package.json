@@ -11,6 +11,7 @@
     "demo": "node scripts/smart-demo.js",
     "full-demo": "node scripts/full-demo.js",
     "scan": "node src/index.js scan",
+    "ghostnet": "node src/index.js ghostnet --chain ethereum",
     "whales": "node src/index.js whales",
     "status": "node src/index.js status",
     "test": "node test/demo.js"
