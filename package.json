@@ -1,0 +1,43 @@
+{
+  "name": "hackobot",
+  "version": "1.0.0",
+  "description": "Autonomous Smart Money Intelligence Agent - Powered by Nansen CLI",
+  "main": "src/index.js",
+  "bin": {
+    "hackobot": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "demo": "node scripts/smart-demo.js",
+    "full-demo": "node scripts/full-demo.js",
+    "scan": "node src/index.js scan",
+    "whales": "node src/index.js whales",
+    "status": "node src/index.js status",
+    "test": "node test/demo.js"
+  },
+  "keywords": [
+    "nansen",
+    "crypto",
+    "smart-money",
+    "blockchain",
+    "ai-agent",
+    "trading",
+    "defi",
+    "ethereum",
+    "solana"
+  ],
+  "author": "HackoBot Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/hackobot"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1"
+  }
+}
