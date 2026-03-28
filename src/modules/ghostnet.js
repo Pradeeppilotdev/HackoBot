@@ -74,7 +74,7 @@ class GhostNet {
     for (const row of rows) {
       const address = row.trader_address || row.address || row.wallet || row.trader;
       if (!address || typeof address !== 'string') continue;
-      if (!address.startsWith('0x') || address.length !== 42) continue;
+      if (address.length < 32) continue;
       if (seen.has(address)) continue;
       seen.add(address);
       wallets.push(address);
