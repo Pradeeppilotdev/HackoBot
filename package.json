@@ -12,6 +12,7 @@
     "full-demo": "node scripts/full-demo.js",
     "scan": "node src/index.js scan",
     "ghostnet": "node src/index.js ghostnet --chain ethereum",
+    "dashboard": "node src/server.js",
     "whales": "node src/index.js whales",
     "status": "node src/index.js status",
     "test": "node test/demo.js"
@@ -39,6 +40,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^11.1.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2"
   }
 }

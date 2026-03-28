@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GhostNet - Cross-Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">
+          <div class="logo-icon">GN</div>
+          <span class="logo-name">GhostNet</span>
+        </div>
+        <div class="logo-sub">CROSS-MARKET WALLET<br>COORDINATION INTELLIGENCE</div>
+      </div>
+
+      <div class="chain-section">
+        <div class="section-label">Network</div>
+        <div class="chain-list">
+          <button class="chain-btn active" onclick="selectChain('ethereum', this)">
+            <span class="chain-dot"></span> Ethereum
+          </button>
+          <button class="chain-btn" onclick="selectChain('solana', this)">
+            <span class="chain-dot"></span> Solana
+          </button>
+          <button class="chain-btn" onclick="selectChain('base', this)">
+            <span class="chain-dot"></span> Base
+          </button>
+        </div>
+      </div>
+
+      <div class="run-section">
+        <button class="run-btn" id="runBtn" onclick="runGhostNet()">
+          <span id="btnText">Run Analysis</span>
+        </button>
+      </div>
+
+      <div class="phase-section">
+        <div class="section-label">Pipeline</div>
+        <div class="phase-step" id="step1">
+          <div class="step-circle">1</div>
+          <span class="step-label">Discover smart-money flows</span>
+        </div>
+        <div class="phase-step" id="step2">
+          <div class="step-circle">2</div>
+          <span class="step-label">Profile wallets + counterparties</span>
+        </div>
+        <div class="phase-step" id="step3">
+          <div class="step-circle">3</div>
+          <span class="step-label">Fetch Hyperliquid perp data</span>
+        </div>
+        <div class="phase-step" id="step4">
+          <div class="step-circle">4</div>
+          <span class="step-label">Detect coordination patterns</span>
+        </div>
+      </div>
+
+      <div class="sidebar-stats">
+        <div class="section-label" style="margin-bottom:8px">Session</div>
+        <div class="stat-row">
+          <span class="stat-k">API CALLS</span>
+          <span class="stat-v" id="statCalls">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-k">WALLETS</span>
+          <span class="stat-v" id="statWallets">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-k">CLUSTERS</span>
+          <span class="stat-v" id="statClusters">-</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-k">RUNTIME</span>
+          <span class="stat-v" id="statRuntime">-</span>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="meta-pill" id="caseId">CASE #----</div>
+          <div class="meta-pill chain" id="chainBadge">ETHEREUM</div>
+          <div class="status-pill">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText">IDLE - SELECT CHAIN AND RUN</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <span id="timestamp">-</span>
+          <button class="topbar-btn" id="copyBtn" onclick="copyBrief()">Copy Brief</button>
+        </div>
+      </div>
+
+      <div class="dashboard">
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="card-icon">SM</span>
+              <span class="card-label">Accumulation Tokens</span>
+            </div>
+            <span class="card-count" id="tokenCount">0 tokens</span>
+          </div>
+          <div class="card-body" id="tokenBody">
+            <div class="empty-state">
+              <div class="empty-state-icon">o</div>
+              <div class="empty-state-text">AWAITING NETFLOW DATA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="card-icon">WL</span>
+              <span class="card-label">Smart Money Wallets</span>
+            </div>
+            <span class="card-count" id="walletCount">0 wallets</span>
+          </div>
+          <div class="card-body" id="walletBody">
+            <div class="empty-state">
+              <div class="empty-state-icon">o</div>
+              <div class="empty-state-text">AWAITING PROFILER DATA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="card-icon">CO</span>
+              <span class="card-label">Coordination Signals</span>
+            </div>
+            <span class="card-count" id="coordCount">0 clusters</span>
+          </div>
+          <div class="card-body" id="coordBody">
+            <div class="empty-state">
+              <div class="empty-state-icon">o</div>
+              <div class="empty-state-text">AWAITING COUNTERPARTY ANALYSIS</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">
+              <span class="card-icon">HL</span>
+              <span class="card-label">Hyperliquid Overlap</span>
+            </div>
+            <span class="card-count" id="perpCount">0 overlaps</span>
+          </div>
+          <div class="card-body" id="perpBody">
+            <div class="empty-state">
+              <div class="empty-state-icon">o</div>
+              <div class="empty-state-text">AWAITING PERP INTELLIGENCE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
