@@ -47,7 +47,7 @@ Scans multiple chains simultaneously to detect:
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/hackobot.git
+git clone https://github.com/Pradeeppilotdev/HackoBot.git
 cd hackobot
 
 # Install dependencies
@@ -110,21 +110,42 @@ node src/index.js quote --chain base --from ETH --to USDC --amount 1000000000000
 node src/index.js status
 ```
 
+### Run GhostNet Dashboard
+```bash
+# Start web dashboard server
+npm run dashboard
+
+# Open in browser
+# http://localhost:3000
+```
+
+### Run GhostNet CLI
+```bash
+node src/index.js ghostnet --chain ethereum
+node src/index.js ghostnet --chain solana
+```
+
 ## Architecture
 
 ```
 hackobot/
 ├── src/
 │   ├── index.js           # CLI interface
+│   ├── server.js          # Dashboard backend (Express + SSE)
 │   ├── core/
 │   │   └── hackobot.js    # Main orchestrator
 │   ├── modules/
 │   │   ├── alpha-scanner.js   # Alpha signal detection
 │   │   ├── whale-tracker.js   # Whale discovery & profiling
 │   │   ├── ai-researcher.js   # AI-powered research
-│   │   └── copy-trader.js     # Copy trading engine
+│   │   ├── copy-trader.js     # Copy trading engine
+│   │   └── ghostnet.js        # Cross-market coordination intelligence
 │   └── utils/
 │       └── nansen.js      # Nansen CLI wrapper
+├── dashboard/
+│   ├── index.html         # GhostNet dashboard UI
+│   ├── style.css          # Dashboard theme/styles
+│   └── app.js             # Live SSE rendering logic
 └── test/
     └── demo.js            # Demo test script
 ```
@@ -205,6 +226,11 @@ HackoBot leverages the full power of Nansen CLI:
 ## License
 
 MIT
+
+## Repository
+
+GitHub: https://github.com/Pradeeppilotdev/HackoBot
+Site: https://ghostnetai.xyz
 
 ---
 
