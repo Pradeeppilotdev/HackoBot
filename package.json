@@ -7,7 +7,7 @@
     "hackobot": "./src/index.js"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/server.js",
     "demo": "node scripts/smart-demo.js",
     "full-demo": "node scripts/full-demo.js",
     "scan": "node src/index.js scan",
