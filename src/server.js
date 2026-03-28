@@ -1,10 +1,25 @@
+// Auto-configure Nansen CLI from environment variable
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+const nansenDir = path.join(os.homedir(), '.nansen');
+const nansenConfig = path.join(nansenDir, 'config.json');
+
+if (process.env.NANSEN_API_KEY && !fs.existsSync(nansenConfig)) {
+  fs.mkdirSync(nansenDir, { recursive: true });
+  fs.writeFileSync(nansenConfig, JSON.stringify({
+    apiKey: process.env.NANSEN_API_KEY
+  }, null, 2));
+  console.log('✅ Nansen config created from environment variable');
+}
+
 /**
  * GhostNet Dashboard Server
  * Express backend that runs GhostNet and serves results to the dashboard
  */
 
 const express = require('express');
-const path = require('path');
 const { GhostNet } = require('./modules/ghostnet');
 
 const app = express();
