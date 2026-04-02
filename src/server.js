@@ -2,6 +2,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+require('dotenv').config();
 
 const nansenDir = path.join(os.homedir(), '.nansen');
 const nansenConfig = path.join(nansenDir, 'config.json');
@@ -21,12 +22,17 @@ if (process.env.NANSEN_API_KEY && !fs.existsSync(nansenConfig)) {
 
 const express = require('express');
 const { GhostNet } = require('./modules/ghostnet');
+const { GhostNetWatcher } = require('./monitor/watcher');
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../dashboard')));
+
+// Start watcher
+const watcher = new GhostNetWatcher();
+watcher.start();
 
 // Main GhostNet API endpoint
 app.get('/api/ghostnet', async (req, res) => {
@@ -104,6 +110,29 @@ app.get('/api/ghostnet', async (req, res) => {
   }
 
   res.end();
+});
+
+// Watcher status endpoint
+app.get('/api/status', (req, res) => {
+  res.json(watcher.getStatus());
+});
+
+// Get last results for a chain
+app.get('/api/results/:chain', (req, res) => {
+  const results = watcher.getLastResults();
+  const chain = req.params.chain;
+  if (results[chain]) {
+    res.json({ success: true, data: results[chain] });
+  } else {
+    res.json({ success: false, message: 'No results yet for this chain' });
+  }
+});
+
+// Manual trigger endpoint
+app.get('/api/trigger/:chain', async (req, res) => {
+  const chain = req.params.chain || 'ethereum';
+  res.json({ success: true, message: `Cycle triggered for ${chain}` });
+  await watcher.runCycle(chain);
 });
 
 app.listen(PORT, () => {

@@ -6,3 +6,7 @@ node_modules/
 .cache/
 coverage/
 dist/
+.env
+DEMO_STRATEGY.md
+QUICK_DEMO.md
+schema.txt

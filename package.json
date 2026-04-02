@@ -13,6 +13,7 @@
     "scan": "node src/index.js scan",
     "ghostnet": "node src/index.js ghostnet --chain ethereum",
     "dashboard": "node src/server.js",
+    "monitor": "node src/server.js",
     "whales": "node src/index.js whales",
     "status": "node src/index.js status",
     "test": "node test/demo.js"
@@ -40,6 +41,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
+    "dotenv": "^17.4.0",
     "express": "^4.18.0",
     "nansen-cli": "1.21.0"
   }
