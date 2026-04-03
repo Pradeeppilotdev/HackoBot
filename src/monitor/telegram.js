@@ -78,6 +78,21 @@ ${emoji} <b>GHOSTNET ALERT</b>
         }).join('\n')
       : '— No wallets profiled';
 
+    const traceInfo = summary.traceStats?.nodes_visited
+      ? `\n🕸 <b>Shadow Network:</b> ${summary.traceStats.nodes_visited} nodes mapped (${summary.traceStats.edges_found} edges)`
+      : '';
+
+    const flowLines = summary.rankedTokens && summary.rankedTokens.length > 0
+      ? '\n\n📊 <b>FLOW INTELLIGENCE:</b>\n' +
+        summary.rankedTokens.map((t, i) => {
+          const tags = [];
+          if (t.smartFlow > 0) tags.push('SM');
+          if (t.whaleFlow > 0) tags.push('Whale');
+          if (t.freshFlow > 10000) tags.push('Fresh');
+          return `${i + 1}. <b>$${t.symbol}</b> [${tags.join('+') || 'neutral'}]`;
+        }).join('\n')
+      : '';
+
     const message = `
 👻 <b>GHOSTNET CYCLE COMPLETE</b>
 
@@ -88,10 +103,10 @@ ${emoji} <b>GHOSTNET ALERT</b>
 ${tokenLines}
 
 🐋 <b>SMART MONEY WALLETS:</b>
-${walletLines}
+${walletLines}${traceInfo}
 
 🕸 <b>Coordination Clusters:</b> ${summary.clusters}
-⚡ <b>Hyperliquid Overlaps:</b> ${summary.overlaps}
+⚡ <b>Hyperliquid Overlaps:</b> ${summary.overlaps}${flowLines}
 
 ${summary.topSignals.length > 0
   ? '🔥 <b>SIGNALS:</b>\n' + summary.topSignals.map(s => `• ${s}`).join('\n')

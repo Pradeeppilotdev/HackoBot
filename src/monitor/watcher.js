@@ -1,6 +1,8 @@
 const { GhostNet } = require('../modules/ghostnet');
 const { TelegramAlerter } = require('./telegram');
 const { SignalClassifier } = require('./classifier');
+const { GhostNetTracer } = require('../modules/tracer');
+const { FlowIntelligence } = require('../modules/flow-intel');
 
 class GhostNetWatcher {
   constructor() {
@@ -20,15 +22,19 @@ class GhostNetWatcher {
 
     try {
       const ghostnet = new GhostNet();
+      const tracer = new GhostNetTracer(ghostnet.nansen);
+      const flowIntel = new FlowIntelligence(ghostnet.nansen);
 
+      // Phase 1: Discover
       const [netflow, dexTrades] = await Promise.all([
         ghostnet.getSmartMoneyTargets(chain),
         ghostnet.getActiveSmartWallets(chain)
       ]);
 
       const topTokens = ghostnet.extractTopTokens(netflow);
-      const walletAddresses = ghostnet.extractWallets(dexTrades, 3);
+      const walletAddresses = ghostnet.extractWallets(dexTrades, 2); // 2 wallets to save credits
 
+      // Phase 2: Profile wallets
       const walletProfiles = [];
       for (const address of walletAddresses) {
         const [counterparties, pnl, labels] = await Promise.all([
@@ -44,19 +50,57 @@ class GhostNetWatcher {
         });
       }
 
+      // Phase 3: Deep intelligence (NEW)
+      // Trace first wallet's network
+      let traceResult = null;
+      let rankedTokens = [];
+
+      if (walletAddresses.length > 0) {
+        traceResult = await tracer.traceWallet(walletAddresses[0], chain);
+      }
+
+      // Get flow intelligence for top tokens
+      if (topTokens.length > 0) {
+        rankedTokens = await flowIntel.rankTokensByConviction(topTokens, chain);
+      }
+
+      // Phase 4: Perp check
       const [perpTrades] = await Promise.all([
         ghostnet.getHyperliquidSmartMoney()
       ]);
 
+      // Phase 5: Detect patterns
       const hyperliquidOverlap = ghostnet.detectHyperliquidOverlap(walletAddresses, perpTrades);
       const coordinationClusters = ghostnet.detectCoordination(walletProfiles);
 
-      // Classify signals
+      // Phase 6: Classify signals
       const signals = this.classifier.classify(
         topTokens, walletProfiles, coordinationClusters, hyperliquidOverlap
       );
 
-      // Send alerts for new high-conviction signals
+      // Add flow-intel based signals
+      for (const token of rankedTokens) {
+        if (token.labelAlignment >= 2 && this.classifier.isNewSignal({
+          type: 'FLOW_ALIGNMENT',
+          token: token.symbol,
+          chain
+        })) {
+          const labels = [];
+          if (token.smartFlow > 0) labels.push('Smart Trader');
+          if (token.whaleFlow > 0) labels.push('Whale');
+          if (token.freshFlow > 10000) labels.push('Fresh Wallet');
+
+          signals.push({
+            type: token.labelAlignment >= 3 ? 'MOMENTUM' : 'EARLY',
+            chain,
+            token: token.symbol,
+            message: `${labels.join(' + ')} all accumulating simultaneously`,
+            confidence: Math.min(95, 50 + token.labelAlignment * 15),
+            raw: token
+          });
+        }
+      }
+
       const highConviction = signals.filter(s =>
         s.confidence >= 70 && this.classifier.isNewSignal(s)
       );
@@ -67,6 +111,7 @@ class GhostNetWatcher {
       }
 
       const runtime = ((Date.now() - start) / 1000).toFixed(1);
+      const traceStats = traceResult?.data?.stats || {};
 
       // Send cycle summary
       await this.alerter.sendCycleSummary({
@@ -79,7 +124,9 @@ class GhostNetWatcher {
         runtime,
         topSignals: highConviction.map(s => `${s.type}: ${s.token} (${s.confidence}%)`),
         topTokens,
-        walletProfiles
+        walletProfiles,
+        rankedTokens,
+        traceStats
       });
 
       // Store results for dashboard
@@ -89,6 +136,8 @@ class GhostNetWatcher {
         coordinationClusters,
         hyperliquidOverlap,
         signals,
+        rankedTokens,
+        traceStats,
         timestamp: Date.now(),
         runtime,
         apiCalls: ghostnet.nansen.getApiCallCount()
