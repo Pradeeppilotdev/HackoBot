@@ -166,14 +166,14 @@ class GhostNetWatcher {
       await this.runCycle(chain);
     }
 
-    // Then run every 30 minutes
+    // Then run every 6 hours
     this.interval = setInterval(async () => {
       for (const chain of this.chains) {
         await this.runCycle(chain);
       }
     }, this.CYCLE_INTERVAL);
 
-    console.log(`[Watcher] Running every 30 minutes on ${this.chains.join(', ')}`);
+    console.log(`[Watcher] Running every 6 hours on ${this.chains.join(', ')}`);
   }
 
   stop() {
